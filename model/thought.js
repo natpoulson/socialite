@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 const Reaction = require('./reaction');
-const moment = require('moment');
+const { formatDate } = require('./helpers');
 
 const thoughtSchema = new Schema(
     {
@@ -22,10 +22,6 @@ const thoughtSchema = new Schema(
         reactions: [ Reaction ]
     }
 );
-// Getter for date
-function formatDate(date) {
-    return moment(date).format('YYYY-MM-DD at HH:mm');
-}
 
 // Virtual for reactionCount
 
