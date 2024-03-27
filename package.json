@@ -4,8 +4,8 @@
   "description": "A test API for managing a fictional social media database using MongoDB and Mongoose.",
   "main": "index.js",
   "scripts": {
-    "start" : "node index.js",
-    "seed" : "node seed/index.js"
+    "start": "node index.js",
+    "seed": "node seed/index.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
   "homepage": "https://github.com/natpoulson/socialite#readme",
   "dependencies": {
     "express": "^4.19.2",
+    "moment": "^2.30.1",
     "mongodb": "^6.5.0",
     "mongoose": "^8.2.3"
   }
