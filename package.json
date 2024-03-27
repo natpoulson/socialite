@@ -1,0 +1,31 @@
+{
+  "name": "socialite",
+  "version": "1.0.0",
+  "description": "A test API for managing a fictional social media database using MongoDB and Mongoose.",
+  "main": "index.js",
+  "scripts": {
+    "start" : "node index.js",
+    "seed" : "node seed/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/natpoulson/socialite.git"
+  },
+  "keywords": [
+    "express",
+    "mongodb",
+    "mongoose",
+    "odm"
+  ],
+  "author": "Nat Poulson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/natpoulson/socialite/issues"
+  },
+  "homepage": "https://github.com/natpoulson/socialite#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongodb": "^6.5.0",
+    "mongoose": "^8.2.3"
+  }
+}
