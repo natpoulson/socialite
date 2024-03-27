@@ -30,7 +30,7 @@ const thoughtSchema = new Schema(
 
 // Virtual for reactionCount
 thoughtSchema.virtual('reactionCount').get(function() {
-    
+    return this.reactions.length;
 });
 
 const Thought = mongoose.model('Thought', thoughtSchema);
