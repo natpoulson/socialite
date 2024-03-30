@@ -37,13 +37,92 @@ module.exports = {
         }
     },
     // Post new user
+    async newUser(req, res) {
+        try {
+            const result = await User.create(req.body, { new: true });
 
-    // Post friend
-
+            res.status(200).json(result);
+            return;
+        } catch (error) {
+            const errResponse = errorHandler(error);
+            res.status(errResponse.code).json(errResponse);
+            return;
+        }
+    },
     // Update user
+    async updateUser(req, res) {
+        try {
+            const result = await User.findOneAndUpdate(
+                { _id: req.params.id },
+                req.body,
+                { new: true }
+            );
+            res.status(200).json(result);
+            return;
+        } catch (error) {
+            const errResponse = errorHandler(error);
+            res.status(errResponse.code).json(errResponse);
+            return;
+        }
+    },
+    // Post friend
+    async addFriend(req, res) {
+        try {
+            const result = await User.findOneAndUpdate(
+                {_id: req.params.id},
+                {
+                    $addToSet: {
+                        friends: req.params.friendId
+                    }
+                },
+                { new: true }
+            );
 
+            res.status(200).json(result);
+            return;
+        } catch (error) {
+            const errResponse = errorHandler(error);
+            res.status(errResponse.code).json(errResponse);
+            return;
+        }
+    },
     // Delete user
         // Also delete their thoughts
+    async deleteUser(req, res) {
+        try {
+            const user = await User.findOne({ _id: req.params.id });
 
+            for (const thought of user.thoughts) {
+                console.log(`[!] Deleting thought: ${thought._id}`);
+                await Thought.findAndDeleteOne({ _id: thought._id });
+            }
+
+            console.log(`[!] Deleting user: ${user.username} (${user._id})`);
+            const result = await User.findOneAndDelete({ _id: user._id });
+
+            res.status(200).json(result);
+        } catch (error) {
+            const errResponse = errorHandler(error);
+            res.status(errResponse.code).json(errResponse);
+            return;
+        }
+    },
     // Delete friend
+    async removeFriend(req, res) {
+        try {
+            const result = await User.findOneAndUpdate(
+                { _id: req.params.id },
+                {
+                    $pull: { friends: req.params.friendId }
+                },
+                { new: true }
+            );
+
+            res.status(200).json(result);
+        } catch (error) {
+            const errResponse = errorHandler(error);
+            res.status(errResponse.code).json(errResponse);
+            return;
+        }
+    }
 }
