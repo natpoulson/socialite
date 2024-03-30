@@ -7,19 +7,13 @@ mongo.on('error', (err) => err);
 
 // Initiate the connection
 mongo.once('open', async () => {
-    // Collections to be dropped
-    const collections = [
-        'users',
-        'thoughts'
-    ];
-    // Drop the existing data
+    const collections = await mongo.listCollections();
     for (const collection of collections) {
-        if (await mongo.db.listCollections({name: collection }).toArray().length) {
-            await mongo.db.dropCollection(collection);
-        }
+        await mongo.dropCollection(collection.name);
     }
-    console.log("Document collections cleaned.");
 
+    console.log("Document collections purged.");
+    console.log("Seeding users...");
     // Seed Users
     for (const email of data.user.emails) {
         // Apply a regex to extract first part of email as display name
@@ -29,7 +23,7 @@ mongo.once('open', async () => {
             username: displayName,
             email: email
         });
-        console.log("ADD User: ", result);
+        console.log(`ADD USER: ${result.username} (${result._id})`);
     }
 
     const users = await User.find({});
@@ -45,7 +39,42 @@ mongo.once('open', async () => {
             thoughtText: data.thought.posts[thoughtIndex],
             username: users[userIndex].username
         });
-        console.log("ADD Thought: ", result);
+        console.log(`ADD Thought: ${result.username} (${result._id})\n${result.thoughtText}`);
+
+        // Attach the thought to a user
+        const userAddResult = await User.findOneAndUpdate(
+            {_id: users[userIndex]._id},
+            {
+                $addToSet: {
+                    thoughts: { _id: result._id }
+                }
+            },
+            { new: true }
+        );
+        console.log(`ATTACH Thought`, userAddResult);
+    }
+
+    const thoughts = await Thought.find({});
+
+    // Create random reactions
+    for (let x = 0; x <= 5; x++) {
+        const targetThought = thoughts[Math.floor( Math.random() * thoughts.length )];
+        const reactBodyIndex = Math.floor( Math.random() * data.reaction.bodies.length );
+        const reactUserIndex = Math.floor( Math.random() * users.length );
+
+        const result = await Thought.findOneAndUpdate(
+            {_id: targetThought._id},
+            { 
+                $addToSet: {
+                    reactions: {
+                        reactionBody: data.reaction.bodies[reactBodyIndex],
+                        username: users[reactUserIndex].username
+                    }
+                }
+            },
+            { new: true }
+        );
+        console.log("ADD Reaction: ", result);
     }
 
     // End process

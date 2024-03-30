@@ -20,7 +20,8 @@ const reactionSchema = new Schema(
             default: Date.now,
             get: formatDate
         }
-    }
+    },
+    { _id: false} // Avoid auto-generating _id so we rely on reactionId instead
 );
 
 module.exports = reactionSchema;
