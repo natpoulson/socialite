@@ -5,13 +5,13 @@ module.exports = {
     // Get all Users
     async getAll(req, res) {
         try {
-            return await User.find({});
+            const response = await User.find({});
+            res.status(200).json(response);
         } catch (error) {
             const errResponse = errorHandler(error);
             res.status(errResponse.code).json(errResponse);
             return;
         }
-
     },
     // Get one user by their ID
     async getById(req, res) {
@@ -22,7 +22,7 @@ module.exports = {
                 throw err;
             }
 
-            const response = await User.findById(id)
+            const response = await User.findById({ _id: req.params.id })
                 .populate([
                     { path: "thoughts" },
                     { path: "friends" }
