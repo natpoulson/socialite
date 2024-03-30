@@ -1,4 +1,4 @@
-const { Schema } = require('mongoose');
+const { mongoose, Schema, Types } = require('mongoose');
 
 const userSchema = new Schema(
     {
@@ -12,22 +12,17 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            validate: {
-                isEmail: function(email) {
-                    // https://gist.github.com/natpoulson/e4ca914df0d7c37845c3a5f6f2590dd6
-                    return /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(email);
-                },
-            }
+            validate: /^[A-Za-z0-9_\.-]+@[\da-z\.-]+\.[a-z\.]{2,10}$/
         },
         thoughts: [
             {
-                type: Schema.Types.ObjectId,
+                type: Types.ObjectId,
                 ref: 'Thought'
             }
         ],
         friends: [
             {
-                type: Schema.Types.ObjectId,
+                type: Types.ObjectId,
                 ref: 'User'
             }
         ],
