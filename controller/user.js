@@ -39,7 +39,7 @@ module.exports = {
     // Post new user
     async newUser(req, res) {
         try {
-            const result = await User.create(req.body, { new: true });
+            const result = await User.create(req.body);
 
             res.status(200).json(result);
             return;
