@@ -29,7 +29,12 @@ const userSchema = new Schema(
     },
     {
         toJSON: {
-            virtuals: true
+            virtuals: true,
+            transform: function (doc, ret, options) {
+                ret.id = ret._id.toString();
+                delete ret._id;
+                delete ret.__v;
+            }
         },
     },
 );
