@@ -1,5 +1,5 @@
 const { User, Thought } = require('../model/index');
-const { errorType, errorMsg, errorHandler, generateError } = require('./helpers');
+const { errorType, errorMsg, errorHandler, generateError, isInvalid } = require('./helpers');
 
 module.exports = {
     // Get all Thoughts
@@ -18,14 +18,14 @@ module.exports = {
     async getById(req, res) {
         try {
             // Missing ID
-            if (!req.params.id) {
+            if (isInvalid(req.params.id)) {
                 generateError(errorType.MISSING_PARAM, errorMsg.thought.MISSING_ID);
             }
 
             const result = await Thought.findById(req.params.id);
 
             // Thought Not found
-            if (!result) {
+            if (isInvalid(result)) {
                 generateError(errorType.NOT_FOUND, errorMsg.thought.THOUGHT_NOT_FOUND);
             }
 
@@ -42,14 +42,14 @@ module.exports = {
             const user = await User.findOne({ username: req.body.username });
 
             // User not found
-            if (!user) {
+            if (isInvalid(user)) {
                 generateError(errorType.NOT_FOUND, errorMsg.user.USER_NOT_FOUND);
             }
 
             const result = await Thought.create(req.body);
 
             // Update failure
-            if (!result) {
+            if (isInvalid(result)) {
                 generateError(errorType.CREATE_FAILURE, errorMsg.thought.CREATE_THOUGHT_FAILURE);
             }
 
@@ -68,7 +68,7 @@ module.exports = {
     async updateThought(req, res) {
         try {
             // Missing ID
-            if (!req.params.id) {
+            if (isInvalid(req.params.id)) {
                 generateError(errorType.MISSING_PARAM, errorMsg.thought.MISSING_ID);
             }
 
@@ -79,7 +79,7 @@ module.exports = {
             );
 
             // Update failed
-            if (!result) {
+            if (isInvalid(result)) {
                 generateError(errorType.UPDATE_FAILURE, errorMsg.thought.UPDATE_THOUGHT_FAILURE);
             }
             
@@ -94,7 +94,7 @@ module.exports = {
     async deleteThought(req, res) {
         try {
             // Missing ID
-            if (!req.params.id) {
+            if (isInvalid(req.params.id)) {
                 generateError(errorType.MISSING_PARAM, errorMsg.thought.MISSING_ID);
             }
 
@@ -111,7 +111,7 @@ module.exports = {
             );
 
             // Update failure
-            if (!updateResult) {
+            if (isInvalid(updateResult)) {
                 generateError(errorType.UPDATE_FAILURE, errorMsg.user.UPDATE_USER_FAILURE);
             }
 
@@ -129,12 +129,12 @@ module.exports = {
     async addReaction(req, res) {
         try {
             // Missing ID
-            if (!req.params.id) {
+            if (isInvalid(req.params.id)) {
                 generateError(errorType.MISSING_PARAM, errorMsg.thought.MISSING_ID);
             }
 
             // Add reaction to thought
-            const result = Thought.findOneAndUpdate(
+            const result = await Thought.findOneAndUpdate(
                 { _id: req.params.id },
                 {
                     $addToSet: {
@@ -145,7 +145,7 @@ module.exports = {
             );
 
             // Update failure
-            if (!result) {
+            if (isInvalid(result)) {
                 generateError(errorType.UPDATE_FAILURE, errorMsg.thought.UPDATE_THOUGHT_FAILURE);
             }
 
@@ -160,24 +160,24 @@ module.exports = {
     async removeReaction(req, res) {
         try {
             // Missing ID
-            if (!req.params.id) {
+            if (isInvalid(req.params.id)) {
                 generateError(errorType.MISSING_PARAM, errorMsg.thought.MISSING_ID);
             }
 
             // Missing reaction ID
-            if (!req.params.reactionId) {
+            if (isInvalid(req.params.reactionId)) {
                 generateError(errorType.MISSING_PARAM, errorMsg.thought.MISSING_REACTION_ID);
             }
 
             const thought = await Thought.findOne({ _id: req.params.id });
 
             // Can't find parent thought
-            if (!thought) {
+            if (isInvalid(thought)) {
                 generateError(errorType.NOT_FOUND, errorMsg.thought.THOUGHT_NOT_FOUND);
             }
 
             // Can't find reaction
-            if (!thought.reactions.find(element => element._id.toString() === req.params.reactionId)) {
+            if (!thought.reactions.find(element => element.reactionId.toString() === req.params.reactionId)) {
                 generateError(errorType.NOT_FOUND, errorMsg.thought.REACTION_NOT_FOUND);
             }
 
@@ -186,7 +186,7 @@ module.exports = {
             const result = await thought.save();
 
             // Update failure
-            if (!result) {
+            if (isInvalid(result)) {
                 generateError(errorType.UPDATE_FAILURE, errorMsg.thought.UPDATE_THOUGHT_FAILURE);
             }
 
