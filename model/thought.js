@@ -28,7 +28,8 @@ const thoughtSchema = new Schema(
                 ret.id = ret._id.toString();
                 delete ret._id;
                 delete ret.__v;
-            }
+            },
+            getters: true // Required for getter methods to work
         },
     },
 );

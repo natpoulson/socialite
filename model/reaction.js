@@ -21,7 +21,12 @@ const reactionSchema = new Schema(
             get: formatDate
         }
     },
-    { _id: false} // Avoid auto-generating _id so we rely on reactionId instead
+    { 
+        _id: false, // Avoid auto-generating _id so we rely on reactionId instead
+        toJSON: {
+            getters: true // Required for get function to work in responses
+        }
+    } 
 );
 
 module.exports = reactionSchema;
