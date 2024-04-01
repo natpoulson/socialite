@@ -5,6 +5,7 @@ const errorType = {
     UPDATE_FAILURE: "E_UpdateFail",
     MONGO_VALIDATION_FAIL: "ValidationError",
     MONGO_SERVER_ERROR: "MongoServerError",
+    MONGO_CAST_ERROR: "CastError"
 };
 
 const errorSubType = {
@@ -23,7 +24,8 @@ const errorMsg = {
         USER_NOT_FOUND: "No User found matching the parameters given.",
         FRIEND_NOT_FOUND: "No Friend found matching the parameters given.",
         CREATE_USER_FAILURE: "Failed to create new User.",
-        UPDATE_USER_FAILURE: "Failed to update User."
+        UPDATE_USER_FAILURE: "Failed to update User.",
+        CREATE_FRIEND_FAILURE: "Failed to add Friend."
     },
     thought: {
         MISSING_ID: "No Thought ID provided.",
@@ -44,6 +46,7 @@ module.exports = {
 
         switch (error.name) {
             case errorType.MONGO_VALIDATION_FAIL:
+            case errorType.MONGO_CAST_ERROR:
             case errorType.MISSING_PARAM:
                 respCode = 400;
                 break;
@@ -76,5 +79,11 @@ module.exports = {
         const err = new Error(message);
         err.name = type;
         throw err;
+    },
+    isInvalid(test) {
+        if (!test || Object.is(test, null)) {
+            return true;
+        }
+        return false;
     }
 }
