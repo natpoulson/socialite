@@ -68,7 +68,7 @@ module.exports = {
     async updateThought(req, res) {
         try {
             // Missing ID
-            if (isinvalid(req.params.id)) {
+            if (isInvalid(req.params.id)) {
                 generateError(errorType.MISSING_PARAM, errorMsg.thought.MISSING_ID);
             }
 
@@ -79,7 +79,7 @@ module.exports = {
             );
 
             // Update failed
-            if (isinvalid(result)) {
+            if (isInvalid(result)) {
                 generateError(errorType.UPDATE_FAILURE, errorMsg.thought.UPDATE_THOUGHT_FAILURE);
             }
             

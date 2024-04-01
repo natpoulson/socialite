@@ -3,6 +3,7 @@ const errorType = {
     NOT_FOUND: "E_NotFound",
     CREATE_FAILURE: "E_CreateFail",
     UPDATE_FAILURE: "E_UpdateFail",
+    SELF_REFERENCE: "E_SelfReference",
     MONGO_VALIDATION_FAIL: "ValidationError",
     MONGO_SERVER_ERROR: "MongoServerError",
     MONGO_CAST_ERROR: "CastError"
@@ -25,7 +26,8 @@ const errorMsg = {
         FRIEND_NOT_FOUND: "No Friend found matching the parameters given.",
         CREATE_USER_FAILURE: "Failed to create new User.",
         UPDATE_USER_FAILURE: "Failed to update User.",
-        CREATE_FRIEND_FAILURE: "Failed to add Friend."
+        CREATE_FRIEND_FAILURE: "Failed to add Friend.",
+        FRIEND_ID_SAME_AS_ID: "You can't add yourself as a Friend."
     },
     thought: {
         MISSING_ID: "No Thought ID provided.",

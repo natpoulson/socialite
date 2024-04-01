@@ -87,19 +87,35 @@ module.exports = {
                 generateError(errorType.MISSING_PARAM, errorMsg.user.MISSING_ID);
             }
 
-            const result = await User.findOneAndUpdate(
-                {_id: req.params.id},
-                {
-                    $addToSet: {
-                        friends: req.params.friendId
-                    }
-                },
-                { new: true }
-            );
-
-            if (isInvalid(result)) {
-                generateError(errorType.UPDATE_FAILURE, errorMsg.user.CREATE_FRIEND_FAILURE);
+            if (req.params.id === req.params.friendId) {
+                generateError(errorType.SELF_REFERENCE, errorMsg.user.FRIEND_ID_SAME_AS_ID);
             }
+
+            // Fetch user and make sure they exist
+            const user = await User.findOne({ _id: req.params.id });
+
+            if (isInvalid(user)) {
+                generateError(errorType.NOT_FOUND, errorMsg.user.USER_NOT_FOUND);
+            }
+
+            // Fetch friend and make sure they exist
+            const friend = await User.findOne({ _id: req.params.friendId });
+
+            if (isInvalid(friend)) {
+                generateError(errorType.NOT_FOUND, errorMsg.user.FRIEND_NOT_FOUND);
+            }
+
+            // Generate the bond
+            const userAdd = user.friends.addToSet(friend._id);
+            const friendAdd = friend.friends.addToSet(user._id);
+
+            if (isInvalid(userAdd) || isInvalid(friendAdd)) {
+                generateError(errorType.UPDATE_FAILURE, errorMsg.user.UPDATE_USER_FAILURE);
+            }
+
+            // Commit
+            await friend.save();
+            const result = await user.save({new: true});
 
             res.status(200).json(result);
             return;
@@ -143,17 +159,33 @@ module.exports = {
                 generateError(errorType.MISSING_PARAM, errorMsg.user.MISSING_ID);
             }
 
-            const result = await User.findOneAndUpdate(
-                { _id: req.params.id },
-                {
-                    $pull: { friends: req.params.friendId }
-                },
-                { new: true }
-            );
+            if (isInvalid(req.params.friendId)) {
+                generateError(errorType.MISSING_PARAM, errorMsg.user.MISSING_FRIEND_ID);
+            }
 
-            if (isInvalid(result)) {
+            // Fetch user and make sure they exist
+            const user = await User.findOne({ _id: req.params.id });
+
+            if (isInvalid(user)) {
+                generateError(errorType.NOT_FOUND, errorMsg.user.USER_NOT_FOUND);
+            }
+
+            // Fetch friend and make sure they exist
+            const friend = await User.findOne({ _id: req.params.friendId });
+
+            if (isInvalid(friend)) {
+                generateError(errorType.NOT_FOUND, errorMsg.user.FRIEND_NOT_FOUND);
+            }
+
+            const userPull = user.friends.pull(req.params.friendId);
+            const friendPull = friend.friends.pull(req.params.id);
+
+            if (isInvalid(userPull) || isInvalid(friendPull)) {
                 generateError(errorType.UPDATE_FAILURE, errorMsg.user.UPDATE_USER_FAILURE);
             }
+
+            await friend.save();
+            const result = await user.save({new: true});
 
             res.status(200).json(result);
         } catch (error) {
