@@ -1,5 +1,5 @@
 const { User, Thought } = require('../model/index');
-const { errorType, errorMsg, errorHandler } = require('./helpers');
+const { errorType, errorMsg, errorHandler, generateError } = require('./helpers');
 
 module.exports = {
     // Get all Users
@@ -17,9 +17,7 @@ module.exports = {
     async getById(req, res) {
         try {
             if (!req.params.id) {
-                const err = new Error(errorMsg.generic.MISSING_PARAM);
-                err.name = errorType.MISSING_PARAM;
-                throw err;
+                generateError(errorType.MISSING_PARAM, errorMsg.user.MISSING_ID);
             }
 
             const response = await User.findById({ _id: req.params.id })
@@ -52,6 +50,10 @@ module.exports = {
     // Update user
     async updateUser(req, res) {
         try {
+            if (!req.params.id) {
+                generateError(errorType.MISSING_PARAM, errorMsg.user.MISSING_ID);
+            }
+
             const result = await User.findOneAndUpdate(
                 { _id: req.params.id },
                 req.body,
@@ -68,6 +70,10 @@ module.exports = {
     // Post friend
     async addFriend(req, res) {
         try {
+            if (!req.params.id) {
+                generateError(errorType.MISSING_PARAM, errorMsg.user.MISSING_ID);
+            }
+
             const result = await User.findOneAndUpdate(
                 {_id: req.params.id},
                 {
@@ -90,6 +96,10 @@ module.exports = {
         // Also delete their thoughts
     async deleteUser(req, res) {
         try {
+            if (!req.params.id) {
+                generateError(errorType.MISSING_PARAM, errorMsg.user.MISSING_ID);
+            }
+
             const user = await User.findOne({ _id: req.params.id });
 
             for (const thought of user.thoughts) {
@@ -110,6 +120,10 @@ module.exports = {
     // Delete friend
     async removeFriend(req, res) {
         try {
+            if (!req.params.id) {
+                generateError(errorType.MISSING_PARAM, errorMsg.user.MISSING_ID);
+            }
+
             const result = await User.findOneAndUpdate(
                 { _id: req.params.id },
                 {
