@@ -85,12 +85,39 @@ As the endpoints were predominantly tested using Insomnia, an export of the Coll
 ![A demo of the DELETE /api/thoughts/:id/reactions/:reactionId route in Insomnia](./docs/thoughts_delete_reaction.gif)
 
 ## Installation
+### Prerequisites
+- [Node.js version 20 LTS or higher](https://nodejs.org/en)
+- [MongoDB Community Server version 7.0.7 or higher](https://www.mongodb.com/try/download/community)
+- A means of interacting with REST APIs, such as
+    - [cURL](https://curl.se/)
+    - [Postman](https://www.postman.com/)
+    - [Insomnia](https://insomnia.rest/)
+        - (Optional) Import the included [Insomnia Collection](./docs/Insomnia_Collection.json) to pre-load routes for testing
 
+### Setup
+- Clone a copy of the files to the system you wish to run this from
+- From a command prompt or terminal, navigate to the directory and enter `npm install`
+- Once packages have been downloaded, seed the database by running `npm run seed`
+- Start the server using `npm start`
+- Refer to the [Usage](#usage) section for additional guidance on the endpoints available
 
 ## Credits
 ### Code and Extensibility
+This app was developed with the following runtimes and packages:
+
+#### Runtimes
+- [Node.js](https://nodejs.org/en)
+- [MongoDB Community Server](https://www.mongodb.com/try/download/)
+
+#### Packages
+- [Express.js](https://expressjs.com/)
+- [Moment.js](https://momentjs.com/)
+- [MongoDB](https://www.npmjs.com/package/mongodb)
+- [Mongoose](https://mongoosejs.com/)
 
 ### References
+- Dummy data for email addresses generated via [Online Data Generator](https://www.onlinedatagenerator.com/home/demo)
+- Random sentences used as placeholder text in both Thoughts and Reactions generated from [Random Word Generator](https://randomwordgenerator.com/sentence.php)
 
 ## License
 This repository is provided under the [MIT License](./LICENSE)
