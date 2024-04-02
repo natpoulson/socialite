@@ -139,8 +139,17 @@ module.exports = {
                 generateError(errorType.NOT_FOUND, errorMsg.user.USER_NOT_FOUND);
             }
 
+            // Remove all the thoughts associated with our user
             for (const thought of user.thoughts) {
                 await Thought.findAndDeleteOne({ _id: thought._id });
+            }
+
+            // Remove them from any other user who has them as a friend
+            for (const friend of user.friends) {
+                await User.findOneAndUpdate(
+                    { _id: friend },
+                    { $pull: user._id }
+                );
             }
 
             const result = await User.findOneAndDelete({ _id: user._id });
